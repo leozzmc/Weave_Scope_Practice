@@ -6,10 +6,9 @@ The Scope Volume Count plugin is a Python application that asks docker for the t
 
 * Using a pre-built Docker image
 
-If you want to make sure of running the latest available version of the plugin, you pull the image from docker hub.
-
 ```
-docker pull weaveworksplugins/scope-volume-count:latest
+sudo chmod +x volume-count.py
+docker build -t scope-volume-count:latest .
 ```
 
 To run the Scope Volume Count plugin you just need to run the following command.
