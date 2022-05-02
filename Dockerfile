@@ -4,7 +4,7 @@ LABEL works.weave.role=system
 
 RUN apt-get update && apt-get upgrade
 RUN apt install -y python3-pip
-RUN pip install docker-py
+RUN pip3 install docker-py
 
 # Add our plugin
 ADD ./volume-count.py /usr/bin/
