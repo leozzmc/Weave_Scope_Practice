@@ -1,7 +1,3 @@
-###
-#Pre-requision:
-#⚠ pip3 install kubernetes
-###
 from operator import ge
 from kubernetes import  client,config
 from kubernetes.stream import stream
@@ -59,7 +55,5 @@ class KubeTool:
         pod_log = Api_Instance.read_namespaced_pod_log(name=given_pod,namespace=given_namespace)
         print(pod_log)
 
-
-        
-#kubeInstance = KubeTool()
-#print(kubeInstance.read_pod_log("kube-system","etcd-minikube"))
+KubeInstance = KubeTool()
+print(KubeInstance.read_pod_log("kube-system","kube-scheduler-minikube"))

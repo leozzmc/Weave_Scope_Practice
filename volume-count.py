@@ -12,10 +12,13 @@ import socket
 import threading
 import time
 import urllib2
+from kubetool import KubeTool
 
 PLUGIN_ID="volume-count"
 PLUGIN_UNIX_SOCK="/var/run/scope/plugins/" + PLUGIN_ID + ".sock"
 DOCKER_SOCK="unix://var/run/docker.sock"
+KubeInstance = KubeTool()
+
 
 nodes = {}
 
@@ -137,3 +140,4 @@ def main():
         raise
 
 main()
+#print(KubeInstance.read_pod_log("kube-system","kube-scheduler-minikube"))
