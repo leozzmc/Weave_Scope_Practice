@@ -1,9 +1,8 @@
-"""
-Pre-requision:
-⚠ pip3 install kubernetes
-"""
+###
+#Pre-requision:
+#⚠ pip3 install kubernetes
+###
 from operator import ge
-from re import A
 from kubernetes import  client,config
 from kubernetes.stream import stream
 import yaml
@@ -52,14 +51,15 @@ class KubeTool:
     def get_services(self):
         service_list=[]
         for i in Api_Instance.list_service_for_all_namespaces().items:
-            print(f"[{i.metadata.namespace}] [{i.metadata.name}] {i.spec.cluster_ip} <{i.spec.ports[0].name}> {i.spec.ports[0].port} ---> {i.spec.ports[0].target_port}")
+            #print(f"[{i.metadata.namespace}] [{i.metadata.name}] {i.spec.cluster_ip} <{i.spec.ports[0].name}> {i.spec.ports[0].port} ---> {i.spec.ports[0].target_port}")
+            pass
 
-    # Output the pod log for given namespace
-    def read_pod_log(slef, given_namespace:str, given_pod:str):
+    # Output the pod log for given namespace (str,str)
+    def read_pod_log(slef, given_namespace, given_pod):
         pod_log = Api_Instance.read_namespaced_pod_log(name=given_pod,namespace=given_namespace)
         print(pod_log)
 
 
         
-kubeInstance = KubeTool()
-print(kubeInstance.read_pod_log("kube-system","etcd-minikube"))
+#kubeInstance = KubeTool()
+#print(kubeInstance.read_pod_log("kube-system","etcd-minikube"))

@@ -1,7 +1,8 @@
-##!/usr/bin/env python3.5
+#!/usr/bin/env python
 
-from docker import APIClient
-import socketserver
+from docker import Client
+import BaseHTTPServer
+import SocketServer
 import datetime
 import errno
 import json
@@ -10,8 +11,7 @@ import signal
 import socket
 import threading
 import time
-from urllib.parse  import urlparse
-from http.server import BaseHTTPRequestHandler, HTTPServer
+import urllib2
 
 PLUGIN_ID="volume-count"
 PLUGIN_UNIX_SOCK="/var/run/scope/plugins/" + PLUGIN_ID + ".sock"
@@ -29,7 +29,7 @@ def update_loop():
 
         # Fetch and convert data to scope data model
         new = {}
-        for container_id, volume_count in container_volume_counts().items():
+        for container_id, volume_count in container_volume_counts().iteritems():
             new["%s;<container>" % (container_id)] = {
                 'latest': {
                     'volume_count': {
@@ -51,13 +51,13 @@ def start_update_loop():
 # List all containers, with the count of their volumes
 def container_volume_counts():
     containers = {}
-    cli = APIClient(base_url=DOCKER_SOCK, version='auto')
+    cli = Client(base_url=DOCKER_SOCK, version='auto')
     for c in cli.containers(all=True):
         containers[c['Id']] = len(c['Mounts'])
     return containers
 
 
-class Handler(BaseHTTPRequestHandler):
+class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_GET(self):
         # The logger requires a client_address, but unix sockets don't have
         # one, so we fake it.
@@ -129,7 +129,7 @@ def main():
     # Remove existing socket in case it was left behind
     delete_socket_file()
     # Listen for connections on the unix socket
-    server = socketserver.UnixStreamServer(PLUGIN_UNIX_SOCK, Handler)
+    server = SocketServer.UnixStreamServer(PLUGIN_UNIX_SOCK, Handler)
     try:
         server.serve_forever()
     except:

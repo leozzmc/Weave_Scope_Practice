@@ -27,6 +27,15 @@ git clone git@github.com:weaveworks-plugins/scope-volume-count.git
 cd scope-volume-count; make;
 ```
 
+* Using KubeTool
+
+```
+prerequsion:
+apt-install python-pip
+pip install docker docker-py
+pip install kubernetes
+```
+
 **Note** If Scope Volume Count plugin has been registered by Scope, you will see it in the list of `PLUGINS` in the bottom right of the UI (see the rectangle in the above figure).
 The measured value is showed in the *STATUS* section (see the circle in the above figure).
 
