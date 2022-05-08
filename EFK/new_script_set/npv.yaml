@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-provisioner
+spec:
+  selector:
+    matchLabels:
+      app: nfs-provisioner
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nfs-provisioner
+    spec:
+      #nodeName: 
+      serviceAccount: nfs-provisioner
+      containers:
+        - name: nfs-provisioner
+          image:  # nfs-povisioner image 
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: nfs-client-root
+              mountPath: /persistentvolumes
+          env:
+            - name: PROVISIONER_NAME
+              value: eslog/nfs
+            - name: NFS_SERVER
+              value: # k8s-elasticsearch service IP address
+            - name:  NFS_PATH
+              value: /data/eslog
+      volumes:
+        - name: nfs-client-root
+          nfs:
+            path:  /data/eslog
+            server: # k8s-elasticsearch service IP address
+
