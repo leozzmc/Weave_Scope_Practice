@@ -20,7 +20,7 @@ rules:
     verbs: ["get"]
   - apiGroups: ["extensions"]
     resources: ["podsecuritypolicies"]
-    resourceName: ["nfs-provisioner"]
+    resourceNames: ["nfs-provisioner"]
     verbs: ["use"]
 
 ---
