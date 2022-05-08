@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: es
+  namespace: logging
+spec:
+  serviceName: elasticsearch
+  replicas: 3
+  selector:
+    matchLabels:
+      app: elasticsearch
+  template:
+    metadata:
+      labels: 
+        app: elasticsearch
+    spec:
+      nodeSelector:
+        es: log
+      initContainers:
+      ## Add fix-permissions feature
+      - name: fix-permissions
+        image: busybox
+        command: ["sh","-c","chown -R 1000:1000 /usr/share/elasticsearch/data"]
+        securityContext:
+          privileged: true
+      - name: increase-vm-max-map
+        image: busybox
+        command: ["sysctl", "-w", "vm.max_map_count=262144"]
+        securityContext:
+          privileged: true
+      - name: increase-fd-ulimit
+        image: busybox
+        command: ["sh", "-c", "ulimit -n 65536"]
+        securityContext:
+          privileged: true
+      containers:
+      - name: elasticsearch
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+        ports:
+        - name: rest
+          containerPort: 9200
+          protocol: TCP
+        - name: inter
+          containerPort: 9300
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 1000m
+          requests:
+            cpu: 1000m
+        volumeMounts:
+        - name: data
+          mountPath: /usr/share/elasticsearch/data
+        env:
+        - name: cluster.name
+          value: k8s-logs
+        - name: node.name
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: cluster.initial_master_nodes
+          value: "es-0,es-1,es-2"
+        - name: discovery.zen.minimum_master_nodes
+          value: "2"
+        - name: discovery.seed_hosts
+          value: "elasticsearch"
+        - name: ES_JAVA_OPTS
+          value: "-Xms512m -Xmx512m"
+        - name: network.host
+          value: "0.0.0.0"
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+      labels:
+        app: elasticsearch
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      ## Change to "es-block-storage" which is the nfs storage we have created before
+      storageClassName: es-block-storage
+      resources:
+        requests:
+          storage: 50Gi
+
+
+#+----------------------------------------------------------------+#
+# Same as the "es.yaml" in this article                            #
+# https://blog.csdn.net/weixin_39603190/article/details/120970536  #
+#+----------------------------------------------------------------+#

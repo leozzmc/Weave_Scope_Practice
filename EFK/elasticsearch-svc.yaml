@@ -1,0 +1,22 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: elasticsearch
+  namespace: logging
+  labels:
+    app: elasticsearch
+spec:
+  selector:
+    app: elasticsearch
+  clusterIP: None
+  ports:
+    - port: 9200
+      name: rest
+    - port: 9300
+      name: inter-node
+
+
+#+----------------------------------------------------------------+#
+# Same as the "handlessSvc.yaml" in this article                   #
+# https://blog.csdn.net/weixin_39603190/article/details/120970536  #
+#+----------------------------------------------------------------+#
